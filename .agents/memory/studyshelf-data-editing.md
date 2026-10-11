@@ -1,6 +1,6 @@
 ---
-name: Maat Space data editing
-description: The chosen source of truth and editing boundary for shared Maat Space resources.
+name: StudyShelf data editing
+description: The chosen source of truth and editing boundary for shared StudyShelf resources.
 ---
 
 Shared library resources belong in Replit PostgreSQL. The user chose the Replit Database pane as the only way to add or edit those records; keep the app read-only for shared resource content and do not introduce in-app resource-management writes or new authentication unless the user changes this decision.

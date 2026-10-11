@@ -1,1 +1,1 @@
-- [Maat Space data editing](maat-space-data-editing.md) — shared resources belong in Replit PostgreSQL and are edited only in the Replit Database pane.
+- [StudyShelf data editing](studyshelf-data-editing.md) — shared resources belong in Replit PostgreSQL and are edited only in the Replit Database pane.

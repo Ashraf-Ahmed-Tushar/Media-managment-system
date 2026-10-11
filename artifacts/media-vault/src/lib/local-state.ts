@@ -26,14 +26,14 @@ export interface StoredPlaylist extends Playlist {
   items: PlaylistEntry[];
 }
 
-const keyPrefix = "maat-space:";
-const legacyKeyPrefix = "maat-space-demo:";
+const keyPrefix = "studyshelf:";
+const legacyKeyPrefixes = ["maat-space:", "maat-space-demo:"];
 
 export function readLocalValue<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
     const raw = window.localStorage.getItem(`${keyPrefix}${key}`)
-      ?? window.localStorage.getItem(`${legacyKeyPrefix}${key}`);
+      ?? legacyKeyPrefixes.map((prefix) => window.localStorage.getItem(`${prefix}${key}`)).find(Boolean);
     return raw ? (JSON.parse(raw) as T) : fallback;
   } catch {
     return fallback;
