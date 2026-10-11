@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Maat Space">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#d8b36a"/>
+      <stop offset="1" stop-color="#8c5b20"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#101820"/>
+  <path d="M28 89V39h12l24 30 24-30h12v50H88V62L64 91 40 62v27z" fill="url(#g)"/>
+</svg>

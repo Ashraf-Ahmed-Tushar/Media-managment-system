@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Maat Space — Academic Media Hub"
+description = "A student-focused academic media library for browsing lecture videos, books, notes, past exam papers, playlists, and saved learning resources."
+version = "1.0.0"
+id = "artifacts/media-vault"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24475
+
+[services.development]
+run = "pnpm --filter @workspace/media-vault run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/media-vault", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/media-vault/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24475"
+BASE_PATH = "/"
