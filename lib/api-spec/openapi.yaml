@@ -10,7 +10,23 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: library
+    description: Public read-only library data
 paths:
+  /library/resources:
+    get:
+      operationId: listLibraryResources
+      tags: [library]
+      summary: List published resources
+      responses:
+        "200":
+          description: Published library resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LibraryResource"
   /healthz:
     get:
       operationId: healthCheck
@@ -33,4 +49,98 @@ components:
           type: string
       required:
         - status
+    LibraryResource:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        kind:
+          type: string
+          enum: [book, video, pyq]
+        title:
+          type: string
+        description:
+          type: [string, "null"]
+        category_name:
+          type: [string, "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [published, draft]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        author:
+          type: [string, "null"]
+        cover_url:
+          type: [string, "null"]
+        thumbnail_url:
+          type: [string, "null"]
+        source_type:
+          type: [string, "null"]
+        source_url:
+          type: [string, "null"]
+        access_level:
+          type: [string, "null"]
+        is_restricted:
+          type: boolean
+        total_pages:
+          type: [integer, "null"]
+        preview_pages:
+          type: [integer, "null"]
+        language:
+          type: [string, "null"]
+        publish_year:
+          type: [integer, "null"]
+        semester:
+          type: [string, "null"]
+        subject_name:
+          type: [string, "null"]
+        course_code:
+          type: [string, "null"]
+        exam_type:
+          type: [string, "null"]
+        batch_info:
+          type: [string, "null"]
+        file_urls:
+          type: array
+          items:
+            type: string
+        view_count:
+          type: integer
+      required:
+        - id
+        - kind
+        - title
+        - description
+        - category_name
+        - tags
+        - status
+        - created_at
+        - updated_at
+        - author
+        - cover_url
+        - thumbnail_url
+        - source_type
+        - source_url
+        - access_level
+        - is_restricted
+        - total_pages
+        - preview_pages
+        - language
+        - publish_year
+        - semester
+        - subject_name
+        - course_code
+        - exam_type
+        - batch_info
+        - file_urls
+        - view_count
 

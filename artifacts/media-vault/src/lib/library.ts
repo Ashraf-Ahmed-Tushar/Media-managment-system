@@ -163,6 +163,6 @@ export interface LibraryService {
   signOut(): Promise<void>;
 }
 
-export type ConnectionMode = "demo" | "supabase" | "configuration-needed";
+export type ConnectionMode = "database";
 
 export { library, getConnectionMode } from "./library-repository";
