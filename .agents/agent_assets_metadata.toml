@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "AvG5QT733568JTskr1AMk"
+uri = "file://artifacts/media-vault/supabase/maat-space-full-setup.sql"
+type = "unspecified"
+title = "Maat Space database setup"
+description = "Complete schema, access policies, and all sample books, videos, and past papers. For a new Supabase project only; not a live database dump."
+logical_id = "fef018e5-0a0e-4b09-9be4-ecf3a8ea4904"
+content_hash = "sha256:acf34431c5e0b73fa82cdd3689ff0312bda8b39334415b2a69e08a5f7b9820e1"
+size = 21697
+mtime_ms = 1791691038804
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:5229467e-ee91-4ec9-874c-fd18de94206c/fef018e5-0a0e-4b09-9be4-ecf3a8ea4904/100b1230-850e-4390-abcd-7e04ec741f62"
+storage_version_token = "1791691045907840"
+content_type = "application/octet-stream"

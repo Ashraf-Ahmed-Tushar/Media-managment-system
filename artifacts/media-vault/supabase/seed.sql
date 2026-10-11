@@ -115,3 +115,23 @@ set title = excluded.title,
     category_id = excluded.category_id,
     status = excluded.status;
 
+insert into public.pyq_papers
+  (title, description, category_id, semester, subject_name, course_code, exam_type, batch_info, status)
+select
+  'CSE 205 — Data Structures',
+  'A sample exam record with semester, course, and batch metadata.',
+  c.id,
+  '3rd Semester',
+  'Data Structures',
+  'CSE 205',
+  'Midterm',
+  'Spring 2024',
+  'published'
+from public.categories c
+where c.slug = 'past-questions'
+on conflict (course_code, semester, exam_type, batch_info) do update
+set title = excluded.title,
+    description = excluded.description,
+    category_id = excluded.category_id,
+    status = excluded.status;
+

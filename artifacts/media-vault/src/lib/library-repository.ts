@@ -163,8 +163,8 @@ function filterResources(
   return resources
     .filter((resource) => !filters.categoryId || resource.category_id === filters.categoryId)
     .filter((resource) => !filters.semester || resource.semester === filters.semester)
-    .filter((resource) => !filters.courseCode || resource.course_code === filters.courseCode)
-    .filter((resource) => !filters.examType || resource.exam_type === filters.examType)
+    .filter((resource) => !filters.courseCode || resource.course_code?.toLowerCase().includes(filters.courseCode.trim().toLowerCase()))
+    .filter((resource) => !filters.examType || resource.exam_type?.toLowerCase().includes(filters.examType.trim().toLowerCase()))
     .filter((resource) => {
       if (!query) return true;
       const haystack = [
@@ -546,9 +546,10 @@ async function getPlaylist(
   if (useDemoData()) {
     const playlist = getDemoPlaylists().find((item) => item.id === id);
     if (!playlist) return null;
-    const items = playlist.items
-      .map((item) => getDemoResource(item.kind, item.resource_id))
-      .filter((item): item is Resource => Boolean(item));
+    const items: Resource[] = playlist.items.flatMap((item) => {
+        const resource = getDemoResource(item.kind, item.resource_id);
+        return resource ? [{ ...resource, playlist_item_id: item.id }] : [];
+      });
     return { playlist: { ...playlist, item_count: items.length }, items };
   }
   const client = requireSupabase();
@@ -566,23 +567,21 @@ async function getPlaylist(
     .eq("playlist_id", id)
     .order("position");
   throwIfError(itemError);
-  const items = ((itemRows ?? []) as Row[])
-    .map((item) => {
+  const items: Resource[] = ((itemRows ?? []) as Row[]).flatMap((item) => {
       if (item.book) {
-        return {
+        return [{
           ...toResource("book", item.book),
           playlist_item_id: Number(item.id),
-        };
+        }];
       }
       if (item.video) {
-        return {
+        return [{
           ...toResource("video", item.video),
           playlist_item_id: Number(item.id),
-        };
+        }];
       }
-      return null;
-    })
-    .filter((item): item is Resource => Boolean(item));
+      return [];
+    });
   return { playlist: toPlaylist(playlistRow as Row), items };
 }
 
@@ -659,10 +658,19 @@ async function addPlaylistItem(
     return;
   }
   const client = requireSupabase();
+  const { data: existingItems, error: listError } = await client
+    .from("playlist_items")
+    .select("position")
+    .eq("playlist_id", playlistId)
+    .order("position", { ascending: false })
+    .limit(1);
+  throwIfError(listError);
+  const nextPosition = Number((existingItems?.[0] as Row | undefined)?.position ?? -1) + 1;
   const { error } = await client.from("playlist_items").insert({
     playlist_id: playlistId,
     book_id: kind === "book" ? resourceId : null,
     video_id: kind === "video" ? resourceId : null,
+    position: nextPosition,
   });
   throwIfError(error);
 }
