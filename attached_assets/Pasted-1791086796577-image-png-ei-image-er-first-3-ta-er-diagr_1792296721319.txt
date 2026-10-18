@@ -1,0 +1,256 @@
+1791086796577_image.png
+ei image er first 3 ta (er diagram, dfd, schema diagram) same rekhe alada 3 ta image generate kore deo natural rekhe
+
+Spotting the missing entity behind a dangling foreign key.
+Tomar list-er attribute (column) ekdom thik ache. Amar ER relation-gulo banate jei column dorkar chhilo, shob tomar list-e ache, kono column missing na. Ekta entity missing ar kichu FK mark missing.
+
+1. Missing entity: CUSTOM_ROLES
+USER_CUSTOM_ROLES.custom_role_id FK → CUSTOM_ROLES.id bole, kintu CUSTOM_ROLES tomar 14 entity-r list-e nei. Ota na thakle FK ta kothao point korche na. Tai entity hobe 15 ta:
+
+Entity 15 — CUSTOM_ROLES
+id (PK)
+name
+description
+created_at
+updated_at
+Ei column-gulo age-er image theke niyechi, tomar doc-e nei. Tomar project-e ja ache seta mile dekho. Report-er “fourteen entities” o “fifteen” korte hobe.
+
+2. FK mark missing (relationship-er jonno dorkar)
+Column ache, kintu (FK → …) likha nei. Ei jaygagulo add korte hobe:
+
+Entity	Column	Hobe
+BOOKS	category_id	FK → CATEGORIES.id
+VIDEOS	created_by	FK → USERS.id
+VIDEOS	category_id	FK → CATEGORIES.id
+WATCH_HISTORY	user_id	FK → USERS.id
+WATCH_HISTORY	video_id	FK → VIDEOS.id
+SEARCH_HISTORY	user_id	FK → USERS.id
+PYQ_PAPERS	created_by	FK → USERS.id
+PLAYLISTS	created_by	FK → USERS.id
+PLAYLIST_ITEMS	playlist_id	FK → PLAYLISTS.id
+PLAYLIST_ITEMS	video_id	FK → VIDEOS.id
+FAVORITES	user_id	FK → USERS.id
+BOOK_PLAYLISTS	created_by	FK → USERS.id
+BOOK_PLAYLIST_ITEMS	playlist_id	FK → BOOK_PLAYLISTS.id
+BOOK_PLAYLIST_ITEMS	book_id	FK → BOOKS.id
+BOOK_HISTORY	user_id	FK → USERS.id
+BOOK_HISTORY	book_id	FK → BOOKS.id
+Tomar list-e jegulo already ache (BOOKS.created_by, USER_CUSTOM_ROLES duto, PLAYLISTS.category_id, BOOK_PLAYLISTS.category_id) sheguloi thik.
+
+3. Tomar decision lagbe
+CATEGORIES.parent_id: eta CATEGORIES.id-ke point kore (self-reference), ar na hole FK mark korte hobe: parent_id (FK → CATEGORIES.id).
+VIDEOS.subcategory_id: jodi sub-category-o CATEGORIES table-er row hoy, tahole FK → CATEGORIES.id hobe. Na hole je table-e ache seta bolo.
+FAVORITES.content_id: eta content_type onujayi BOOKS ba VIDEOS-e jay, tai FK dewa jabe na. Report-e “polymorphic reference, no FK” likhe dile bhalo.
+Optional: PLAYLIST_ITEMS-e UNIQUE(playlist_id, video_id) ar BOOK_PLAYLIST_ITEMS-e UNIQUE(playlist_id, book_id) dile ekoi item duibar playlist-e dhukte parbe na. Eta tomar list-e nei.
+4. Amar diagram-e ja update lagbe
+Tomar notun list-e USERS.email (UNIQUE) ar CATEGORIES.slug (UNIQUE) ache. Eta amar ER ar Schema diagram-e nei. Tumi bolle ei duto UNIQUE, CUSTOM_ROLES-er jaygay tomar final column, ar upor-er decision-gulo diye 3 ta diagram abar update kore dibo.
+
+ekhn amdr ta fix kore emon vabe de jno amra doc e direct paste korte pari ar useless extra kichu add korbina ba delte korbi na
+
+Reformatting the entity list with added markers and entries.
+Reformatting the entity list with added markers and entries.
+Tomar list-e kichu delete kori ni, shudhu missing FK mark ar CUSTOM_ROLES add korechi. Pura ta copy kore doc-e paste koro:
+
+Entity 1 — USERS
+
+id (PK)
+name
+email (UNIQUE)
+password_hash
+role
+created_at
+updated_at
+status
+phone
+username
+avatar_color
+avatar_url
+semester
+email_verified
+
+Entity 2 — BOOKS
+
+id (PK)
+title
+author
+description
+cover_url
+pdf_url
+category_id (FK → CATEGORIES.id)
+preview_pages
+total_pages
+rating
+language
+publish_year
+tags
+status
+created_at
+updated_at
+created_by (FK → USERS.id)
+pdf_hosted_path
+is_restricted
+
+Entity 3 — VIDEOS
+
+id (PK)
+title
+description
+type
+category_id (FK → CATEGORIES.id)
+subcategory_id
+thumbnail_url
+tags
+source_type
+source_resource_key
+status
+access_level
+view_count
+release_date
+created_by (FK → USERS.id)
+created_at
+updated_at
+
+Entity 4 — WATCH_HISTORY
+
+id (PK)
+user_id (FK → USERS.id)
+video_id (FK → VIDEOS.id)
+progress_seconds
+updated_at
+UNIQUE(user_id, video_id)
+
+Entity 5 — USER_CUSTOM_ROLES
+
+user_id (PK, FK → USERS.id)
+custom_role_id (PK, FK → CUSTOM_ROLES.id)
+assigned_at
+
+Entity 6 — SEARCH_HISTORY
+
+id (PK)
+user_id (FK → USERS.id)
+query
+content_type
+created_at
+
+Entity 7 — PYQ_PAPERS
+
+id (PK)
+semester
+subject_name
+course_code
+exam_type
+batch_info
+file_urls
+file_type
+description
+status
+is_restricted
+sort_order
+created_by (FK → USERS.id)
+created_at
+updated_at
+file_hosted_paths
+
+Entity 8 — PLAYLISTS
+
+id (PK)
+title
+description
+thumbnail_url
+created_by (FK → USERS.id)
+is_public
+source_type
+source_url
+created_at
+updated_at
+category_id (FK → CATEGORIES.id)
+
+Entity 9 — PLAYLIST_ITEMS
+
+id (PK)
+playlist_id (FK → PLAYLISTS.id)
+video_id (FK → VIDEOS.id)
+position
+created_at
+
+Entity 10 — FAVORITES
+
+id (PK)
+user_id (FK → USERS.id)
+content_type
+content_id
+created_at
+UNIQUE(user_id, content_type, content_id)
+
+Entity 11 — CATEGORIES
+
+id (PK)
+name
+slug (UNIQUE)
+description
+kind
+parent_id
+created_at
+updated_at
+
+Entity 12 — BOOK_PLAYLISTS
+
+id (PK)
+title
+description
+thumbnail_url
+created_by (FK → USERS.id)
+is_public
+created_at
+updated_at
+category_id (FK → CATEGORIES.id)
+
+Entity 13 — BOOK_PLAYLIST_ITEMS
+
+id (PK)
+playlist_id (FK → BOOK_PLAYLISTS.id)
+book_id (FK → BOOKS.id)
+position
+created_at
+
+Entity 14 — BOOK_HISTORY
+
+id (PK)
+user_id (FK → USERS.id)
+book_id (FK → BOOKS.id)
+updated_at
+UNIQUE(user_id, book_id)
+
+Entity 15 — CUSTOM_ROLES
+
+id (PK)
+name
+description
+created_at
+updated_at
+Ei jinish-gulo ami ba tumi decide kori ni, tai ager moto-i rekhechi:
+
+CUSTOM_ROLES-er column: name, description, created_at, updated_at age-er image theke niyechi, tomar doc-e chhilo na. Tomar project-e ja ache oi onujayi mile nio.
+CATEGORIES.parent_id ar VIDEOS.subcategory_id: FK mark kori ni, karon tumi ekhono bolo ni eguolo CATEGORIES.id-ke point kore kina.
+FAVORITES.content_id: FK nei, karon eta content_type onujayi BOOKS ba VIDEOS-e jay.
+Entity 15 add hoyeche, tai report-e “fourteen entities” likhle seta “fifteen” korte hobe.
+
+1791089606934_image.png
+fast asap amake schema diagram ta etar moto simple type r kore de
+
+Ran 4 commands, read a file
+Schema diagram-ta sample-er moto simple style-e abar generate korchi, ekhon result-ta check kori.
+
+Read a file, shared files
+Tomar sample image-er moto simple style-e schema diagram banalam. Ekhon shob table-e shudhu PK/FK row dekhay, ar baki column choto text-e ba ... hishebe thake.
+
+Table-gulo: USERS-e shob column ache. Baki table-e PK/FK row-er niche baki column-er naam ache. Jekhane 4 tar beshi column, shekhane ... dilam.
+FK arrow: 21 ta arrow, child-er FK theke parent id-te jacche. Tomar final list-er shob FK (CUSTOM_ROLES shoho) ache.
+Ja bad diyechi: UNIQUE constraint-gulo, karon tomar sample-e chhilo na. CATEGORIES-e slug (UNIQUE) dekhachhe, ota ami rakhini, kintu ei diagram-e seta ekta ...-er moddhe dhukiye ache. Chaile bolo, UNIQUE rows-o add kore dibo.
+
+3 schema diagram simple
+Image·PNG 
+
+3 schema diagram simple
+Image·SVG 
